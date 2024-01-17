@@ -10,6 +10,10 @@ public interface UserService {
 
 	ResponseEntity<ResponseStructure<UserResponse>> addUser(UserRequest user);
 
+	ResponseEntity<ResponseStructure<UserResponse>> getUserById(int userId);
+
+	ResponseEntity<ResponseStructure<UserResponse>> deleteUserById(int userId);
+
 	
 }
 

@@ -17,6 +17,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.school.sba.exception.AdminAlreadyPresentException;
+import com.school.sba.exception.UserNotFoundException;
 
 
 @RestControllerAdvice
@@ -30,7 +31,7 @@ public class ApplicationHandler extends ResponseEntityExceptionHandler{
 				"rootCause",rootCause),status);
 
 	}
-	
+
 
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
@@ -40,18 +41,22 @@ public class ApplicationHandler extends ResponseEntityExceptionHandler{
 		allErrors.forEach(error->{
 			FieldError fieldError=(FieldError) error;
 			errors.put(fieldError.getField(), fieldError.getDefaultMessage());
-			
+
 		});
 		return structure(HttpStatus.BAD_REQUEST,"failed to register",errors);
 	}
 
 	@ExceptionHandler(AdminAlreadyPresentException.class)
-	public ResponseEntity<Object> handleUserNotFoundById(AdminAlreadyPresentException ex){
+	public ResponseEntity<Object> adminsAlreadyExist(AdminAlreadyPresentException ex){
 		return structure(HttpStatus.NOT_FOUND,ex.getMessage(),"admin already exist");
 	}
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<Object> handleUserNotFoundById(UserNotFoundException ex){
+		return structure(HttpStatus.NOT_FOUND,ex.getMessage(),"userNotFound");
+	}
+	public ResponseEntity<Object> handleRunTimeException(RuntimeException ex){
+		return structure(HttpStatus.NOT_FOUND,ex.getMessage(),"illegal exception");
+	}
 
-//	public ResponseEntity<Object> handleRunTimeException(RuntimeException ex){
-//		return structure(HttpStatus.NOT_FOUND,ex.getMessage(),"illegal exception");
-//	}
 
 }

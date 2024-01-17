@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.school.sba.entity.User;
 import com.school.sba.enums.UserRole;
 import com.school.sba.exception.AdminAlreadyPresentException;
+import com.school.sba.exception.UserNotFoundException;
 import com.school.sba.repository.UserRepo;
 import com.school.sba.requestdto.UserRequest;
 import com.school.sba.responsedto.UserResponse;
@@ -21,11 +22,11 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponse>> addUser(UserRequest userRequest) {
-if(userRequest.getUserRole()==UserRole.ADMIN && userRepo.existsByUserRole(UserRole.ADMIN))
-{
-	throw new AdminAlreadyPresentException("admin already exist");
-}
-		
+		if(userRequest.getUserRole()==UserRole.ADMIN && userRepo.existsByUserRole(UserRole.ADMIN))
+		{
+			throw new AdminAlreadyPresentException("admin already exist");
+		}
+
 		User user=userRepo.save(mapToUser(userRequest));
 		responseStructure.setStatus(HttpStatus.CREATED.value());
 		responseStructure.setMessage("data added succesfully");
@@ -53,44 +54,31 @@ if(userRequest.getUserRole()==UserRole.ADMIN && userRepo.existsByUserRole(UserRo
 				.userRole(user.getUserRole())
 				.contactNo(user.getContactNo())
 				.build();	}
-	
-	
 
-//	public boolean registerAdmin(String userName,String password) {
-//		if(!isExistingAdmin()) {
-//			insertAdmin(userName,password);
-//			return true;
-//		}
-//		else {
-//			throw new AdminAlreadyPresentException("admin already exist");
-//		}
-//	}
-//
-//	private void insertAdmin(String userName, String password) {
-//
-//
-//	}
-//
-//
-//
-//
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponse>> getUserById(int userId) {
+		User fetch=userRepo.findById(userId).orElseThrow(()->new UserNotFoundException("userid not exist"));;
+		responseStructure.setStatus(HttpStatus.FOUND.value());
+		responseStructure.setMessage("user fetch succesfully");
+		responseStructure.setData(mapToUserResponse(fetch));
+		return  new ResponseEntity<ResponseStructure<UserResponse>>(responseStructure,HttpStatus.FOUND);
 
-//	private boolean isExistingAdmin() {
-//		if()
-//
-//		return false;
-//	}
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponse>> deleteUserById(int userId) {
+		User delete=userRepo.findById(userId).orElseThrow(()->new UserNotFoundException("userid not exist"));
+		responseStructure.setStatus(HttpStatus.OK.value());
+		responseStructure.setMessage("user deleted succesfully");
+		responseStructure.setData(mapToUserResponse(delete));
+		return  new ResponseEntity<ResponseStructure<UserResponse>>(responseStructure,HttpStatus.OK);
+
+	}
 }
 
-//@Override
-//public ResponseEntity<ResponseStructure<UserResponse>> getUserById(int userId) {
-//	User fetch=userRepo.findById(userId).orElseThrow(()->new UserNotFoundException("userid not exist"));;
-//	responseStructure.setStatus(HttpStatus.FOUND.value());
-//	responseStructure.setMessage("user fetch succesfully");
-//	responseStructure.setData(mapToUserResponse(fetch));
-//	return  new ResponseEntity<ResponseStructure<UserResponse>>(responseStructure,HttpStatus.FOUND);
-//
-//}
+
+
+
 
 
 
