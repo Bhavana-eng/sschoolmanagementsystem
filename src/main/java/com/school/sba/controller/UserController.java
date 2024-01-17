@@ -22,9 +22,9 @@ public class UserController {
 	private  ResponseEntity<ResponseStructure<UserResponse>> addUser(@RequestBody    UserRequest user){
 		return userService.addUser(user);
 	}
-//	@PostMapping("/users/register/{}usersId")
-//	private  ResponseEntity<ResponseStructure<UserResponse>> addUser(@RequestBody    UserRequest user){
-//		return userService.addUser(user);
-//	}
+	@PostMapping("/users/register/{}usersId")
+	private  ResponseEntity<ResponseStructure<UserResponse>> addUser(@RequestBody    UserRequest user){
+		return userService.addUser(user);
+	}
 
 }
